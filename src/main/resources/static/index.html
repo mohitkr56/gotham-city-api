@@ -1,0 +1,693 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superhero Universe | Character Database</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background: #080808;
+            color: #f5f5f5;
+            position: relative;
+            isolation: isolate;
+        }
+
+        /* YOUTUBE BACKGROUND */
+        #youtube-background {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        #youtube-background iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 56.25vw;
+            min-width: 177.78vh;
+            min-height: 100vh;
+            transform: translate(-50%, -50%);
+            border: none;
+        }
+
+        /* DARK RED OVERLAY */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 0, 0, 0.78);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(17, 9, 9, 0.85);
+            border-bottom: 1px solid #651515;
+            box-shadow: 0 4px 25px #ff000015;
+        }
+
+        header h1 {
+            color: #ff3030;
+            letter-spacing: 2px;
+            font-size: 25px;
+            text-shadow: 0 0 15px #ff000080;
+        }
+
+        header span {
+            color: #bca5a5;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            width: 86%;
+            margin: 35px auto;
+        }
+
+        .hero {
+            padding: 55px 35px;
+            background:
+                    radial-gradient(circle at 90% 20%, #8d101044, transparent 35%),
+                    linear-gradient(120deg, rgba(41,9,9,.94), rgba(16,11,11,.94) 75%);
+            border: 1px solid #651515;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 35px #ff000015;
+        }
+
+        .hero .tag {
+            color: #ff5151;
+            letter-spacing: 3px;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .hero h2 {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .hero h2 span {
+            color: #ff3030;
+        }
+
+        .hero p {
+            color: #c5aaaa;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 25px 0 35px;
+        }
+
+        .stat {
+            background: rgba(29,17,17,.92);
+            border: 1px solid #482020;
+            padding: 23px;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+            border-color: #ff3030;
+            box-shadow: 0 0 20px #ff000025;
+        }
+
+        .stat p {
+            color: #bca3a3;
+            font-size: 14px;
+        }
+
+        .stat h3 {
+            color: #ff3535;
+            font-size: 32px;
+            margin-top: 9px;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 18px;
+        }
+
+        .section-heading h2 {
+            font-size: 22px;
+        }
+
+        .section-heading h2 span {
+            color: #ff3535;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 13px;
+            margin-bottom: 25px;
+        }
+
+        input, select {
+            background: #171111;
+            color: white;
+            border: 1px solid #552222;
+            padding: 13px 15px;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            border-color: #ff3333;
+            box-shadow: 0 0 12px #ff000030;
+        }
+
+        #search {
+            flex: 1;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff3030, #a50000);
+            color: white;
+            padding: 12px 18px;
+            border: 1px solid #ff5555;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.25s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 18px #ff000066;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(29,17,17,.94);
+            padding: 23px;
+            border: 1px solid #482020;
+            border-radius: 14px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: #e52b2b;
+            box-shadow: 0 8px 30px #ff000025;
+        }
+
+        .avatar {
+            width: 58px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            background: #3b1010;
+            color: #ff3939;
+            border: 1px solid #812222;
+            border-radius: 14px;
+            font-size: 30px;
+            margin-bottom: 17px;
+        }
+
+        .card h3 {
+            color: #ff4545;
+            margin-bottom: 10px;
+            font-size: 21px;
+        }
+
+        .card p {
+            color: #c3adad;
+            margin: 9px 0;
+            font-size: 14px;
+        }
+
+        .role {
+            display: inline-block;
+            background: #421313;
+            color: #ff7777;
+            border: 1px solid #852323;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .actions button {
+            flex: 1;
+        }
+
+        .edit {
+            background: #9c560b;
+            border-color: #c87b25;
+        }
+
+        .delete {
+            background: #a50000;
+            border-color: #ff4545;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000000dd;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #170d0d;
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid #9b2525;
+            box-shadow: 0 0 35px #ff000030;
+        }
+
+        .modal-content h2 {
+            color: #ff4444;
+            margin-bottom: 22px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            margin-bottom: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-actions button {
+            flex: 1;
+        }
+
+        .empty {
+            color: #c6a0a0;
+            padding: 40px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 15px;
+            color: #9f8585;
+            border-top: 1px solid #351515;
+            margin-top: 55px;
+            background: rgba(16,9,9,.90);
+        }
+
+        footer strong {
+            color: #ff4444;
+        }
+
+        footer .footer-sub {
+            font-size: 12px;
+            margin-top: 9px;
+            color: #a08080;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #090707;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #8f1717;
+            border-radius: 10px;
+        }
+
+        @media(max-width: 650px) {
+            .container {
+                width: 92%;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-direction: column;
+            }
+
+            header span {
+                display: none;
+            }
+
+            .hero h2 {
+                font-size: 28px;
+            }
+
+            .section-heading {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- YOUTUBE BACKGROUND VIDEO -->
+<div id="youtube-background">
+    <iframe
+            src="https://www.youtube.com/embed/a4rebEmzUQs?autoplay=1&mute=1&loop=1&playlist=a4rebEmzUQs&controls=0&disablekb=1&playsinline=1&rel=0"
+            title="Background Video"
+            allow="autoplay; encrypted-media"
+            referrerpolicy="strict-origin-when-cross-origin">
+
+    </iframe>
+</div>
+
+<header>
+    <h1>⚡ SUPERHERO UNIVERSE</h1>
+    <span>HEROES & VILLAINS DATABASE</span>
+</header>
+
+<div class="container">
+
+    <section class="hero">
+        <div class="tag">WELCOME TO THE MULTIVERSE</div>
+        <h2>Explore The <span>Superhero</span> Universe</h2>
+        <p>
+            From Gotham City to Wakanda, discover legendary heroes
+            and powerful villains. Manage your favorite characters
+            in one place.
+        </p>
+    </section>
+
+    <section class="stats">
+        <div class="stat">
+            <p>⚡ Total Characters</p>
+            <h3 id="total">0</h3>
+        </div>
+
+        <div class="stat">
+            <p>🦸 Heroes</p>
+            <h3 id="heroes">0</h3>
+        </div>
+
+        <div class="stat">
+            <p>👹 Villains</p>
+            <h3 id="villains">0</h3>
+        </div>
+    </section>
+
+    <div class="section-heading">
+        <h2>Character <span>Database</span></h2>
+    </div>
+
+    <div class="toolbar">
+        <input
+                type="text"
+                id="search"
+                placeholder="🔍 Search characters..."
+                oninput="renderCharacters()">
+
+        <select id="filter" onchange="renderCharacters()">
+            <option value="All">All Characters</option>
+            <option value="Hero">Heroes</option>
+            <option value="Villain">Villains</option>
+            <option value="Anti-Hero">Anti-Heroes</option>
+            <option value="Ally">Allies</option>
+        </select>
+
+        <button onclick="openModal()">+ Add Character</button>
+    </div>
+
+    <div class="grid" id="characterList"></div>
+
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h2 id="formTitle">Add Character</h2>
+
+        <input type="text" id="name" placeholder="Character Name">
+        <input type="text" id="realName" placeholder="Real Name">
+        <input type="text" id="city" placeholder="City">
+        <input type="text" id="role" placeholder="Role (Hero/Villain)">
+
+        <div class="form-actions">
+            <button onclick="saveCharacter()">Save Character</button>
+            <button class="delete" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>⚡ SUPERHERO UNIVERSE</p>
+    <p>Designed & Developed by <strong>Anand Kumar Saha</strong></p>
+    <p class="footer-sub">
+        Powered by Anand Kumar Saha | Java • Spring Boot • REST API • JavaScript
+    </p>
+</footer>
+
+<script>
+    const API = "/api/characters";
+
+    let characters = [];
+    let editingId = null;
+
+    function getCharacterIcon(name) {
+        const icons = {
+            "Batman": "🦇",
+            "Superman": "🦸",
+            "Wonder Woman": "👸",
+            "Flash": "⚡",
+            "Aquaman": "🌊",
+            "Green Lantern": "💚",
+            "Shazam": "⚡",
+            "Robin": "🦸",
+            "Spider-Man": "🕷️",
+            "Iron Man": "🤖",
+            "Captain America": "🛡️",
+            "Thor": "🔨",
+            "Hulk": "💪",
+            "Black Panther": "🐈‍⬛",
+            "Joker": "🃏",
+            "Lex Luthor": "🧠",
+            "Darkseid": "👹",
+            "Bane": "💀",
+            "Thanos": "🟣",
+            "Green Goblin": "🎃"
+        };
+
+        return icons[name] || "🦸";
+    }
+
+    async function loadCharacters() {
+        try {
+            const response = await fetch(API);
+
+            if (!response.ok) {
+                throw new Error("Unable to load characters");
+            }
+
+            characters = await response.json();
+            renderCharacters();
+
+        } catch (error) {
+            document.getElementById("characterList").innerHTML =
+                '<p class="empty">Unable to connect to database. Please check Spring Boot.</p>';
+        }
+    }
+
+    function renderCharacters() {
+        const search = document.getElementById("search").value.toLowerCase();
+        const filter = document.getElementById("filter").value;
+
+        const filtered = characters.filter(c => {
+            const matchesSearch =
+                (c.name || "").toLowerCase().includes(search) ||
+                (c.realName || "").toLowerCase().includes(search) ||
+                (c.city || "").toLowerCase().includes(search);
+
+            const matchesFilter =
+                filter === "All" ||
+                (c.role || "").toLowerCase() === filter.toLowerCase();
+
+            return matchesSearch && matchesFilter;
+        });
+
+        document.getElementById("total").innerText = characters.length;
+
+        document.getElementById("heroes").innerText =
+            characters.filter(c => (c.role || "").toLowerCase() === "hero").length;
+
+        document.getElementById("villains").innerText =
+            characters.filter(c => (c.role || "").toLowerCase() === "villain").length;
+
+        const list = document.getElementById("characterList");
+
+        if (filtered.length === 0) {
+            list.innerHTML =
+                '<p class="empty">No characters found in this universe.</p>';
+            return;
+        }
+
+        list.innerHTML = filtered.map(c => `
+            <div class="card">
+                <div class="avatar">${getCharacterIcon(c.name)}</div>
+                <h3>${escapeHTML(c.name)}</h3>
+                <p>Real Name: ${escapeHTML(c.realName)}</p>
+                <p>City: ${escapeHTML(c.city)}</p>
+                <span class="role">${escapeHTML(c.role)}</span>
+
+                <div class="actions">
+                    <button class="edit" onclick="editCharacter(${c.id})">Edit</button>
+                    <button class="delete" onclick="deleteCharacter(${c.id})">Delete</button>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
+    }
+
+    function openModal() {
+        editingId = null;
+        document.getElementById("formTitle").innerText = "Add Character";
+
+        ["name", "realName", "city", "role"].forEach(id => {
+            document.getElementById(id).value = "";
+        });
+
+        document.getElementById("modal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").style.display = "none";
+    }
+
+    function editCharacter(id) {
+        const c = characters.find(item => item.id === id);
+        if (!c) return;
+
+        editingId = id;
+        document.getElementById("formTitle").innerText = "Edit Character";
+
+        document.getElementById("name").value = c.name || "";
+        document.getElementById("realName").value = c.realName || "";
+        document.getElementById("city").value = c.city || "";
+        document.getElementById("role").value = c.role || "";
+
+        document.getElementById("modal").style.display = "flex";
+    }
+
+    async function saveCharacter() {
+        const character = {
+            name: document.getElementById("name").value.trim(),
+            realName: document.getElementById("realName").value.trim(),
+            city: document.getElementById("city").value.trim(),
+            role: document.getElementById("role").value.trim()
+        };
+
+        if (!character.name || !character.realName ||
+            !character.city || !character.role) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        try {
+            const url = editingId ? `${API}/${editingId}` : API;
+
+            const response = await fetch(url, {
+                method: editingId ? "PUT" : "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(character)
+            });
+
+            if (!response.ok) {
+                throw new Error("Save failed");
+            }
+
+            closeModal();
+            await loadCharacters();
+            alert("Character saved successfully!");
+
+        } catch (error) {
+            alert("Unable to save character.");
+        }
+    }
+
+    async function deleteCharacter(id) {
+        if (!confirm("Are you sure you want to delete this character?")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API}/${id}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                throw new Error("Delete failed");
+            }
+
+            await loadCharacters();
+            alert("Character deleted successfully!");
+
+        } catch (error) {
+            alert("Unable to delete character.");
+        }
+    }
+
+    loadCharacters();
+</script>
+
+</body>
+</html>
